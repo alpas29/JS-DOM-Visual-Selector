@@ -5,8 +5,11 @@ var __inspectorPlugin = (function() {
     /* ======= Element Info Functions
      */
     var boxElement = document.createElement('div');
+    var divTop = document.createElement('div');
+    var divBottom = document.createElement('div');
+    var divLeft = document.createElement('div');
+    var divRight = document.createElement('div');
 
-    // LOCAL FUNCTIONS
     function getElInfo(e) {
       name = "&lt;" + e.tagName.toLowerCase() + "&gt; " + e.clientWidth + "x" + e.clientHeight;
       return name;
@@ -35,10 +38,10 @@ var __inspectorPlugin = (function() {
     /* ======== Mouse Event Handlers 
      */
     function mouseOverHandler(m) {
-      if(m.target.id !== "INSPECTORBUTTON000") {
+      if(m.target.class !== "INSPECTORBUTTON000") {
         drawBoundingBox(m.target);
       }
-      if(m.target.id !== "INSPECTORBUTTON000") {
+      if(m.target.class !== "INSPECTORBUTTON000") {
         elementInfo(m.target);
       }
     }
@@ -74,11 +77,6 @@ var __inspectorPlugin = (function() {
       // instead, add 4 divs positioned atop the element
       var box = chosenEl.getBoundingClientRect();
 
-      divTop = document.createElement('div');
-      divBottom = document.createElement('div');
-      divLeft = document.createElement('div');
-      divRight = document.createElement('div');
-
       var xOffset = window.scrollX;
       var yOffset = window.scrollY;
 
@@ -100,30 +98,45 @@ var __inspectorPlugin = (function() {
         addEvent(document.body, "mouseover", mouseOverHandler);
         addEvent(document.body, "mouseout", mouseOutHandler);
         addEvent(document.body, "mousedown", mouseDownHandler);
-        btn.innerHTML = "Pause Inspector";
-        btn.setAttribute("onclick", "__inspectorPlugin.pauseInspector()");
-        btn.parentNode.replaceChild(btn,btn);
+        document.body.style.cursor = 'crosshair';
+        startBtn.innerHTML = "Pause Inspector";
+        startBtn.setAttribute("onclick", "__inspectorPlugin.pauseInspector()");
+      },
+      stopInspector: function() {
+        __inspectorPlugin.pauseInspector();
+        removeBoundingBox();
+        document.body.removeChild(boxElement);
       },
       pauseInspector: function() {
         removeEvent(document.body, "mouseover", mouseOverHandler);
         removeEvent(document.body, "mousedown", mouseDownHandler);
         removeEvent(document.body, "mouseout", mouseOutHandler); // remove this so that highlighting remains
-        btn.innerHTML = "Start Inspector";
-        btn.setAttribute("onclick", "__inspectorPlugin.startInspector()");
+        document.body.style.cursor = 'auto';
+        startBtn.innerHTML = "Start Inspector";
+        startBtn.setAttribute("onclick", "__inspectorPlugin.startInspector()");
       },
-      addInspectorButton: function() {
-        btn = document.createElement("button");
-        btn.setAttribute("type", "button");
-        btn.setAttribute("onclick", "__inspectorPlugin.startInspector()");
-        btn.setAttribute("id", "INSPECTORBUTTON000");
-        btn.style.cssText = 'position: absolute; top: 0; right: 0;';
-        btn.innerHTML = "Start Inspector";
-        document.body.appendChild(btn);    
+      addInspectorButtons: function() {
+        startBtn = document.createElement("button");
+        startBtn.setAttribute("type", "button");
+        startBtn.setAttribute("onclick", "__inspectorPlugin.startInspector()");
+        startBtn.setAttribute("class", "INSPECTORBUTTON000");
+        startBtn.style.cssText = 'position: absolute; top: 0; right: 0;';
+        startBtn.innerHTML = "Start Inspector";
+        
+        stopBtn = document.createElement("button");
+        stopBtn.setAttribute("type", "button");
+        stopBtn.setAttribute("onclick", "__inspectorPlugin.stopInspector()");
+        stopBtn.setAttribute("class", "INSPECTORBUTTON000");
+        stopBtn.style.cssText = 'position: absolute; top: 25px; right: 0;';
+        stopBtn.innerHTML = "Stop Inspector";
+
+        document.body.appendChild(stopBtn);
+        document.body.appendChild(startBtn);
       }
     }
 })();
 
-__inspectorPlugin.addInspectorButton();
+__inspectorPlugin.addInspectorButtons();
 
 
 
