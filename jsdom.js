@@ -83,17 +83,15 @@ function mouseOverHandler(m) {
   if(m.target.id !== "INSPECTORBUTTON000") {
     INSBOXFUN.drawBoundingBox(m.target);
   }
+  if(m.target.id !== "INSPECTORBUTTON000") {
+    ELINFOFUN.elementInfo(m.target);
+  }
 }
 function mouseOutHandler(m) {
   INSBOXFUN.removeBoundingBox();
 }
 function mouseDownHandler(m) {
-  if(m.target.id !== "INSPECTORBUTTON000") {
-    try {
-      ELINFOFUN.elementInfo(m.target);
-    } catch (err) { console.log(err); stopInspector(); }
-  }
-  stopInspector();
+  pauseInspector();
 }
 
 // Cross-bOWSer event listener functions
@@ -120,14 +118,15 @@ function startInspector() {
   addEvent(document.body, "mouseout", mouseOutHandler);
   addEvent(document.body, "mousedown", mouseDownHandler);
 
-  btn.innerHTML = "Stop Inspector";
-  btn.setAttribute("onclick", "stopInspector()");
+  btn.innerHTML = "Pause Inspector";
+  btn.setAttribute("onclick", "pauseInspector()");
   btn.parentNode.replaceChild(btn,btn);
 }
 
-function stopInspector() {
+function pauseInspector() {
   removeEvent(document.body, "mouseover", mouseOverHandler);
   removeEvent(document.body, "mousedown", mouseDownHandler);
+  removeEvent(document.body, "mouseout", mouseOutHandler);
 
   btn.innerHTML = "Start Inspector";
   btn.setAttribute("onclick", "startInspector()");
