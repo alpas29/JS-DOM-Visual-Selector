@@ -6,30 +6,27 @@
 
 var ELINFOFUN = (function() {
 
-    var tracker='';
+    var boxElement = document.createElement('div');
 
     // LOCAL FUNCTIONS
-    function showInfoBox(infoData) {
-      // register box in global tracker
-      // (then use it to remove the box when the next element is clicked)
-      var boxElement = document.createElement(div);
+    function getElInfo(e) {
+      name = "&lt;" + e.tagName.toLowerCase() + "&gt; " + e.clientWidth + "x" + e.clientHeight;
+      return name;
     }
-    function remInfoBox() {
-      document.body.removeChild(tracker);
-      tracker='';
+    function showInfoBox(infoData,e) {
+      rect = e.getBoundingClientRect();
+      cssStyleString = "position: absolute; top: "+(rect.top-18)+"px; left: "+(rect.left+5)+"px; line-height: 12px; font-size: 12px; padding: 1px; border: 1px solid black; background-color: #ADD8E6;";
+      console.log(cssStyleString);
+      boxElement.style.cssText = cssStyleString;
+      boxElement.innerHTML = infoData;
+      document.body.appendChild(boxElement);
     }
 
     // CROSS FUNCTIONS
     return {
-      function elementInfo(el) {
-        // get element info
-
-        // display info
-        if(typeof variable !== '') {
-          remInfoBox();
-        } else {
-          showInfoBox(infoData);
-        }
+      elementInfo: function(e) {
+        infoData = getElInfo(e);
+        showInfoBox(infoData,e);
       }
     }
 
@@ -52,10 +49,9 @@ var INSBOXFUN = (function() {
     }
 
     return {
-      function drawBoundingBox(chosenEl) {
+      drawBoundingBox: function(chosenEl) {
         // borders/outlines/margins/padding etc. will effect page layout
         // instead, add 4 divs positioned atop the element
-
         var box = chosenEl.getBoundingClientRect();
 
         divTop = document.createElement('div');
@@ -70,9 +66,8 @@ var INSBOXFUN = (function() {
         addEdgeDiv(divBottom, box.width, 2, box.bottom+yOffset, box.left+xOffset);
         addEdgeDiv(divLeft, 2, box.height, box.top+yOffset, box.left+xOffset);
         addEdgeDiv(divRight, 2, box.height, box.top+yOffset, box.right+xOffset);
-      }
-
-      function removeBoundingBox() {
+      },
+      removeBoundingBox: function() {
         document.body.removeChild(divTop);
         document.body.removeChild(divBottom);
         document.body.removeChild(divLeft);
@@ -86,15 +81,17 @@ var INSBOXFUN = (function() {
  * ======================================================================== */
 function mouseOverHandler(m) {
   if(m.target.id !== "INSPECTORBUTTON000") {
-    drawBoundingBox(m.target);
+    INSBOXFUN.drawBoundingBox(m.target);
   }
 }
 function mouseOutHandler(m) {
-  removeBoundingBox();
+  INSBOXFUN.removeBoundingBox();
 }
 function mouseDownHandler(m) {
   if(m.target.id !== "INSPECTORBUTTON000") {
-    ELINFOFUN.elementInfo(m.target);
+    try {
+      ELINFOFUN.elementInfo(m.target);
+    } catch (err) { console.log(err); stopInspector(); }
   }
   stopInspector();
 }
@@ -147,3 +144,6 @@ function addInspectorButton() {
 }
 
 addInspectorButton();
+
+
+
