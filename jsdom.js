@@ -1,5 +1,6 @@
 // vim: ts=2:sw=2
 
+<<<<<<< Updated upstream
 /* ======= Element Info Functions
  * ======================================================================== */
 
@@ -144,6 +145,96 @@ function addInspectorButton() {
 }
 
 addInspectorButton();
+=======
+var __inspectorPlugin = __inspectorPlugin || {};
+
+var __inspectorPlugin = {
+
+    INIT: function() {       // initialization for inspector start
+      var boxElement = document.createElement('div');
+      var divTop = document.createElement('div');
+      var divBottom = document.createElement('div');
+      var divLeft = document.createElement('div');
+      var divRight = document.createElement('div');
+      this.MAINFUNCTIONS.addInspectorButtons();
+    },
+
+    /* ======= Element Info 
+     */
+
+    ELINFO: {
+      getElInfo: function(e) {
+        name = "&lt;" + e.tagName.toLowerCase() + "&gt; " + e.clientWidth + "x" + e.clientHeight;
+        return name;
+      },
+      showInfoBox: function (infoData,e) {
+        rect = e.getBoundingClientRect();
+        cssStyleString = "position: absolute; top: "+(rect.top-18)+"px; left: "+(rect.left+5)+"px; line-height: 12px; font-size: 12px; padding: 1px; border: 1px solid black; background-color: #ADD8E6;";
+        boxElement.style.cssText = cssStyleString;
+        boxElement.innerHTML = infoData;
+        document.body.appendChild(boxElement);
+      }
+    },
+
+    /* ======== Adding/Removing Inspector Box
+     */
+
+    INSPEC: {
+      init: function() {
+        this.addEvent(document.body, "mouseover", this.mouseOverHandler);
+        this.addEvent(document.body, "mouseout", this.mouseOutHandler);
+        this.addEvent(document.body, "mousedown", this.mouseDownHandler);
+      },
+      exit: function() {
+        this.removeEvent(document.body, "mouseover", this.mouseOverHandler);
+        this.removeEvent(document.body, "mousedown", this.mouseDownHandler);
+        this.removeEvent(document.body, "mouseout", mouseOutHandler); // remove this so that highlighting remains 
+        document.body.removeChild(divBottom);
+        document.body.removeChild(divLeft);
+        document.body.removeChild(divRight);
+      }
+    },
+
+    MAINFUNCTIONS: {
+      startInspector: function() {
+        __inspectorPlugin.INSPEC.init();
+        document.body.style.cursor = 'crosshair';
+        startBtn.innerHTML = "Pause Inspector";
+        startBtn.setAttribute("onclick", "__inspectorPlugin.pauseInspector()");
+      },
+      stopInspector: function() {
+        __inspectorPlugin.pauseInspector();
+        document.body.removeChild(boxElement);
+      },
+      pauseInspector: function() {
+        document.body.style.cursor = 'auto';
+        startBtn.innerHTML = "Start Inspector";
+        startBtn.setAttribute("onclick", "__inspectorPlugin.MAINFUNCTIONS.startInspector()");
+        __inspectorPlugin.INSPEC.exit();
+      },
+      addInspectorButtons: function() {
+        startBtn = document.createElement("button");
+        startBtn.setAttribute("type", "button");
+        startBtn.setAttribute("onclick", "__inspectorPlugin.MAINFUNCTIONS.startInspector()");
+        startBtn.setAttribute("class", "INSPECTORBUTTON000");
+        startBtn.style.cssText = 'position: absolute; top: 0; right: 0;';
+        startBtn.innerHTML = "Start Inspector";
+        
+        stopBtn = document.createElement("button");
+        stopBtn.setAttribute("type", "button");
+        stopBtn.setAttribute("onclick", "__inspectorPlugin.MAINFUNCTIONS.stopInspector()");
+        stopBtn.setAttribute("class", "INSPECTORBUTTON000");
+        stopBtn.style.cssText = 'position: absolute; top: 25px; right: 0;';
+        stopBtn.innerHTML = "Stop Inspector";
+
+        document.body.appendChild(stopBtn);
+        document.body.appendChild(startBtn);
+      }
+    }
+}
+
+__inspectorPlugin.INIT();
+>>>>>>> Stashed changes
 
 
 
